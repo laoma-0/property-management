@@ -1,4 +1,4 @@
-package com.propertymanagement.propertymanagement;
+package com.propertymanagement;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class PasswordEncoderTest {

@@ -1,4 +1,4 @@
-package com.propertymanagement.propertymanagement;
+package com.propertymanagement;
 
 import io.jsonwebtoken.security.Keys;
 
