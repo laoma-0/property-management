@@ -22,3 +22,19 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# 通用忽略
+.DS_Store
+*.log
+*.tmp
+
+# 后端忽略
+backend/target/
+backend/.settings/
+backend/.classpath
+backend/.project
+
+# 前端忽略
+frontend/node_modules/
+frontend/.env
+frontend/dist/
+frontend/build/
