@@ -1,0 +1,19 @@
+# 在仓库根目录创建 .gitignore 文件
+@"
+# 通用忽略
+.DS_Store
+*.log
+*.tmp
+
+# 后端忽略 (Spring Boot)
+backend/target/
+backend/.settings/
+backend/.classpath
+backend/.project
+
+# 前端忽略 (React)
+frontend/node_modules/
+frontend/.env
+frontend/dist/
+frontend/build/
+"@ | Out-File -FilePath .\.gitignore -Encoding utf8
