@@ -1,0 +1,3 @@
+[submodule "property-management"]
+	path = property-management
+	url = https://github.com/laoma-0/property-management
