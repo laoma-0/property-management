@@ -1,4 +1,3 @@
-// src/utils/axios.js
 import axios from 'axios'
 
 const apiClient = axios.create({
@@ -24,11 +23,9 @@ apiClient.interceptors.request.use(config => {
 // 响应拦截器
 apiClient.interceptors.response.use(
     response => {
-        // 统一处理成功响应
         return response.data
     },
     error => {
-        // 统一处理错误响应
         const errorMessage = error.response?.data?.message ||
             error.message ||
             '网络请求失败'

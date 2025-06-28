@@ -28,6 +28,10 @@
       >
         登录
       </el-button>
+
+      <div class="debug-link">
+        <router-link to="/debug">调试页面</router-link>
+      </div>
     </el-form>
   </div>
 </template>
@@ -51,7 +55,6 @@ const handleLogin = async () => {
   try {
     await userStore.login(form.value)
     ElMessage.success('登录成功')
-    router.push('/')
   } catch (error) {
     ElMessage.error(error.message || '登录失败')
   } finally {
@@ -84,6 +87,13 @@ const handleLogin = async () => {
     .login-btn {
       width: 100%;
       margin-top: 10px;
+    }
+
+    .debug-link {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
     }
   }
 }
