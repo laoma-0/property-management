@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import com.propertymanagement.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -37,6 +38,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
@@ -93,6 +97,9 @@ public class AuthController {
     }
     @PutMapping("/users/update")
     public ResponseEntity<?> updateUser(@RequestBody User updatedUser) {
+        if (updatedUser.getId() == null) {
+            return ResponseEntity.badRequest().body("用户 ID 不能为空");
+        }
         Optional<User> existingUser = userRepository.findById(updatedUser.getId());
         if (existingUser.isPresent()) {
             User user = existingUser.get();
@@ -115,6 +122,15 @@ public class AuthController {
 
             userRepository.save(user);
             return ResponseEntity.ok("User updated successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/users/disable/{userId}")
+    public ResponseEntity<?> disableUser(@PathVariable Integer userId) {
+        int rowsAffected = userService.disableUser(userId);
+        if (rowsAffected > 0) {
+            return ResponseEntity.ok("User disabled successfully");
         } else {
             return ResponseEntity.notFound().build();
         }
