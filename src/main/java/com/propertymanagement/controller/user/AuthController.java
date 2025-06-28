@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class AuthController {
 
     @Autowired
@@ -38,7 +38,7 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest loginRequest) throws Exception {
         try {
             authenticationManager.authenticate(
@@ -58,7 +58,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
         // 检查用户名是否已存在
         Optional<User> existingUser = userRepository.findByUsername(registerRequest.getUsername());
@@ -80,5 +80,43 @@ public class AuthController {
         userRepository.save(newUser);
 
         return ResponseEntity.ok("User registered successfully");
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return ResponseEntity.ok(userOptional.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/users/update")
+    public ResponseEntity<?> updateUser(@RequestBody User updatedUser) {
+        Optional<User> existingUser = userRepository.findById(updatedUser.getId());
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            if (updatedUser.getUsername() != null) {
+                user.setUsername(updatedUser.getUsername());
+            }
+            if (updatedUser.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+            }
+            if (updatedUser.getPhone() != null) {
+                user.setPhone(updatedUser.getPhone());
+            }
+            if (updatedUser.getEmail() != null) {
+                user.setEmail(updatedUser.getEmail());
+            }
+            if (updatedUser.getRole() != null) {
+                user.setRole(updatedUser.getRole());
+            }
+            user.setCreateTime(LocalDateTime.now());
+
+            userRepository.save(user);
+            return ResponseEntity.ok("User updated successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
