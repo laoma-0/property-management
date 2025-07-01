@@ -108,22 +108,8 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/useAuthStore.js';
-import {
-  // fetchUserList,
-  // createUser,
-  // updateUser,
-  // deleteUser
-    // fetchUsers,
-    // createUser,
-    // updateUser,
-    // deleteUser
-} from '@/services/userService.js';
-import {ElMessage} from "element-plus"; // 需要创建这些API服务
-
-const router = useRouter();
-const authStore = useAuthStore();
+import userService from '@/services/userService.js';
+import { ElMessage } from 'element-plus';
 
 // 数据状态
 const userList = ref([]);
@@ -156,7 +142,7 @@ const fetchUsers = async () => {
       role: roleFilter.value
     };
 
-    const response = await fetchUserList(params);
+    const response = await userService.getUsers(params);
     userList.value = response.data.records || [];
     total.value = response.data.total || 0;
   } catch (error) {
@@ -207,11 +193,11 @@ const saveUser = async () => {
 
     if (formData.id) {
       // 更新用户
-      await updateUser(formData.id, formData);
+      await userService.updateUser(formData.id, formData);
       ElMessage.success('用户更新成功');
     } else {
       // 创建用户
-      await createUser(formData);
+      await userService.createUser(formData);
       ElMessage.success('用户创建成功');
     }
 
@@ -232,7 +218,7 @@ const handleDelete = (row) => {
 
 const confirmDelete = async () => {
   try {
-    await deleteUser(formData.id);
+    await userService.deleteUser(formData.id);
     ElMessage.success('用户删除成功');
     deleteDialogVisible.value = false;
     await fetchUsers(); // 刷新列表
@@ -244,13 +230,6 @@ const confirmDelete = async () => {
 
 // 生命周期钩子
 onMounted(() => {
-  // 检查用户权限
-  if (!authStore.userInfo || authStore.userInfo.role !== 'admin') {
-    ElMessage.warning('您没有权限访问用户管理页面');
-    router.push('/home');
-    return;
-  }
-
   // 加载用户列表
   fetchUsers();
 });
