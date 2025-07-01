@@ -193,11 +193,11 @@
 import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/userStore'
+import { useAuthStore } from '@/stores/useAuthStore.js';
 import axios from '@/utils/axios'
 
 const router = useRouter()
-const userStore = useUserStore()
+const userStore = useAuthStore()
 
 const activeTab = ref('login')
 const loginFormRef = ref(null)
@@ -281,7 +281,7 @@ const handleLogin = async () => {
     })
 
     ElMessage.success('登录成功！')
-    router.push('/home')
+    await router.push('home')
   } catch (error) {
     ElMessage.error(error.message || '登录失败，请重试')
   } finally {
