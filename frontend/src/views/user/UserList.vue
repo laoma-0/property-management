@@ -1,108 +1,120 @@
 <template>
   <div class="user-management-container">
-    <el-card class="box-card">
-      <template #header>
-        <div class="clearfix">
-          <span>用户管理</span>
-          <el-button style="float: right; padding: 3px 0" type="primary" @click="handleCreate">
-            新增用户
-          </el-button>
-        </div>
-      </template>
-
-      <!-- 搜索和筛选区域 -->
-      <el-row class="mb-4">
-        <el-col :span="8">
-          <el-input v-model="searchKeyword" placeholder="搜索用户名" @keyup.enter="fetchUsers">
-            <template #append>
-              <el-button @click="fetchUsers">搜索</el-button>
-            </template>
-          </el-input>
-        </el-col>
-        <el-col :span="8">
-          <el-select v-model="roleFilter" placeholder="选择角色" @change="fetchUsers">
-            <el-option label="全部" value=""></el-option>
-            <el-option label="管理员" value="admin"></el-option>
-            <el-option label="普通用户" value="user"></el-option>
-          </el-select>
-        </el-col>
-      </el-row>
-
-      <!-- 用户列表 -->
-      <el-table :data="userList" stripe style="width: 100%">
-        <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="username" label="用户名"></el-table-column>
-        <el-table-column prop="role" label="角色">
-          <template #default="scope">
-            <el-tag :type="scope.row.role === 'admin' ? 'danger' : 'success'">
-              {{ scope.row.role === 'admin' ? '管理员' : '普通用户' }}
-            </el-tag>
+    <!-- 引入 HeaderBar 组件 -->
+    <HeaderBar />
+    <div style="display: flex; flex: 1; min-height: 0">
+      <!-- 引入 Sidebar 组件 -->
+      <Sidebar class="sidebar" :active-menu="'/user-list'" />
+      <div class="main-content">
+        <!-- 引入 Breadcrumb 组件 -->
+        <Breadcrumb :items="[{ label: '用户管理', path: '/user-list' }]" />
+        <el-card class="box-card">
+          <template #header>
+            <div class="clearfix">
+              <span>用户管理</span>
+              <el-button style="float: right; padding: 3px 0" type="primary" @click="handleCreate">
+                新增用户
+              </el-button>
+            </div>
           </template>
-        </el-table-column>
-        <el-table-column prop="email" label="邮箱"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间"></el-table-column>
-        <el-table-column label="操作" width="200">
-          <template #default="scope">
-            <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+
+          <!-- 搜索和筛选区域 -->
+          <el-row class="mb-4">
+            <el-col :span="8">
+              <el-input v-model="searchKeyword" placeholder="搜索用户名" @keyup.enter="fetchUsers">
+                <template #append>
+                  <el-button @click="fetchUsers">搜索</el-button>
+                </template>
+              </el-input>
+            </el-col>
+            <el-col :span="8">
+              <el-select v-model="roleFilter" placeholder="选择角色" @change="fetchUsers">
+                <el-option label="全部" value=""></el-option>
+                <el-option label="管理员" value="admin"></el-option>
+                <el-option label="普通用户" value="user"></el-option>
+              </el-select>
+            </el-col>
+          </el-row>
+
+          <!-- 用户列表 -->
+          <el-table :data="userList" stripe style="width: 100%">
+            <el-table-column prop="id" label="ID" width="80"></el-table-column>
+            <el-table-column prop="username" label="用户名"></el-table-column>
+            <el-table-column prop="role" label="角色">
+              <template #default="scope">
+                <el-tag :type="scope.row.role === 'admin' ? 'danger' : 'success'">
+                  {{ scope.row.role === 'admin' ? '管理员' : '普通用户' }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="email" label="邮箱"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间"></el-table-column>
+            <el-table-column label="操作" width="200">
+              <template #default="scope">
+                <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
+                <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <!-- 分页控件 -->
+          <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="currentPage"
+              :page-sizes="[10, 20, 30]"
+              :page-size="pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total"
+          >
+          </el-pagination>
+        </el-card>
+
+        <!-- 新增/编辑用户对话框 -->
+        <el-dialog :visible.sync="dialogVisible" title="用户信息">
+          <el-form :model="formData" ref="formRef" label-width="100px">
+            <el-form-item label="用户名" prop="username">
+              <el-input v-model="formData.username"></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+              <el-input v-model="formData.password" type="password"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="formData.email"></el-input>
+            </el-form-item>
+            <el-form-item label="角色" prop="role">
+              <el-radio-group v-model="formData.role">
+                <el-radio label="admin">管理员</el-radio>
+                <el-radio label="user">普通用户</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-form>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="dialogVisible = false">取消</el-button>
+              <el-button type="primary" @click="saveUser">确定</el-button>
+            </span>
           </template>
-        </el-table-column>
-      </el-table>
+        </el-dialog>
 
-      <!-- 分页控件 -->
-      <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 20, 30]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
-      </el-pagination>
-    </el-card>
-
-    <!-- 新增/编辑用户对话框 -->
-    <el-dialog :visible.sync="dialogVisible" title="用户信息">
-      <el-form :model="formData" ref="formRef" label-width="100px">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="formData.username"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="formData.password" type="password"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="formData.email"></el-input>
-        </el-form-item>
-        <el-form-item label="角色" prop="role">
-          <el-radio-group v-model="formData.role">
-            <el-radio label="admin">管理员</el-radio>
-            <el-radio label="user">普通用户</el-radio>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="dialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="saveUser">确定</el-button>
-        </span>
-      </template>
-    </el-dialog>
-
-    <!-- 删除确认对话框 -->
-    <el-dialog
-        title="提示"
-        :visible.sync="deleteDialogVisible"
-        width="30%">
-      <template #content>
-        <p>确定要删除用户 {{ deleteUserId }} 吗？</p>
-      </template>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="deleteDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="confirmDelete">确定</el-button>
-        </span>
-      </template>
-    </el-dialog>
+        <!-- 删除确认对话框 -->
+        <el-dialog
+            title="提示"
+            :visible.sync="deleteDialogVisible"
+            width="30%"
+        >
+          <template #content>
+            <p>确定要删除用户 {{ deleteUserId }} 吗？</p>
+          </template>
+          <template #footer>
+            <span class="dialog-footer">
+              <el-button @click="deleteDialogVisible = false">取消</el-button>
+              <el-button type="primary" @click="confirmDelete">确定</el-button>
+            </span>
+          </template>
+        </el-dialog>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -110,6 +122,10 @@
 import { ref, reactive, onMounted } from 'vue';
 import userService from '@/services/userService.js';
 import { ElMessage } from 'element-plus';
+// 引入组件
+import HeaderBar from '@/components/basis/HeaderBar.vue';
+import Sidebar from '@/components/basis/Sidebar.vue';
+import Breadcrumb from '@/components/basis/Breadcrumb.vue';
 
 // 数据状态
 const userList = ref([]);

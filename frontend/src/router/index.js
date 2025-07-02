@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
 import HomeView from '@/views/HomeView.vue';
-import DebugView from '@/views/DebugView.vue';
-import UserManagement from '@/views/user/List.vue';
+import DebugView from '@/views/util/DebugView.vue';
+import UserManagement from '@/views/user/UserList.vue';
 import { useAuthStore } from '@/stores/useAuthStore.js';
 import {ElMessage} from "element-plus"; // 确保路径正确
 
@@ -51,7 +51,7 @@ const routes = [
     {
         path: '/date-utils-demo',
         name: 'DateUtilsDemo',
-        component: () => import('@/views/DateUtilsDemo.vue'),
+        component: () => import('@/views/util/DateUtilsDemo.vue'),
         meta: {
             title: '日期工具演示',
             requiresAuth: false
