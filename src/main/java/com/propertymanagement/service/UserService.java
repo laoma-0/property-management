@@ -13,4 +13,10 @@ public class UserService {
     public int disableUser(Integer userId) {
         return userRepository.disableUserById(userId);
     }
+    public int enableUser(Integer userId) {
+        return userRepository.enableUserById(userId);
+    }
+    public int deleteUser(Integer userId) {
+        return userRepository.deleteUserById(userId);
+    }
 }

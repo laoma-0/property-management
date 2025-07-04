@@ -32,7 +32,7 @@ public class User {
     private String role;
 
 
-    @Column(name = "status")
+    @Column(name = "status")//1-active, 0-disabled
     private Integer status = 1;
 
     @Column(name = "create_time", updatable = false)

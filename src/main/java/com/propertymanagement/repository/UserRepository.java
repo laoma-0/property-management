@@ -17,4 +17,15 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Transactional
     @Query("UPDATE User u SET u.status = 0 WHERE u.id = :userId")
     int disableUserById(Integer userId);
+
+    // 启用用户
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.status = 1 WHERE u.id = :userId")
+    int enableUserById(Integer userId);
+    // 根据 ID 删除用户
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM User u WHERE u.id = :userId")
+    int deleteUserById(Integer userId);
 }
