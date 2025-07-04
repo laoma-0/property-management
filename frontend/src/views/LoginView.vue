@@ -281,7 +281,7 @@ const handleLogin = async () => {
     })
 
     ElMessage.success('登录成功！')
-    await router.push('home')
+    await router.push('HomeView')// 跳转到主页
   } catch (error) {
     ElMessage.error(error.message || '登录失败，请重试')
   } finally {
