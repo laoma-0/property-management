@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
 import HomeView from '@/views/HomeView.vue';
-import DebugView from '@/views/DebugView.vue';
-import UserManagement from '@/views/user/List.vue';
+import DebugView from '@/views/util/DebugView.vue';
+import UserManagement from '@/views/user/UserManagement.vue';
 import { useAuthStore } from '@/stores/useAuthStore.js';
-import {ElMessage} from "element-plus"; // 确保路径正确
+import { ElMessage } from 'element-plus';
+import MainLayout from "@/components/layout/MainLayout.vue"; // 确保路径正确
 
 const routes = [
     {
@@ -21,24 +22,43 @@ const routes = [
         }
     },
     {
-        path: '/home',
-        name: 'home',
+        path: '/HomeView',
+        name: 'HomeView',
         component: HomeView,
         meta: {
-            requiresAuth: true,
-            title: '首页'
+            breadcrumb: '控制台'
         }
     },
     {
-        path: '/user/list',
-        name: 'UserManagement',
-        component: UserManagement,
-        meta: {
-            title: '用户管理',
-            requiresAuth: true,
-            roles: ['admin'] // 确保与后端角色标识一致
-        }
+        path: '/',
+        component: MainLayout, // 布局组件
+        children: [
+            {
+                path: 'home',
+                name: 'home',
+                component: HomeView,
+                meta: { breadcrumb: '控制台', requiresAuth: true }
+            },
+            {
+                path: 'user-management',
+                name: 'UserManagement',
+                component: UserManagement,
+                meta: { breadcrumb: '用户管理', requiresAuth: true, requiresAdmin: true }
+            },
+            // {
+            //     path: 'settings',
+            //     name: 'settings',
+            //     component: () => import('@/views/Settings.vue'),
+            //     meta: { breadcrumb: '系统设置', requiresAuth: true }
+            // },
+            // 其他需要共享布局的路由...
+        ]
     },
+    // {
+    //     path: '/:pathMatch(.*)*',
+    //     name: 'NotFound',
+    //     component: () => import('@/views/NotFound.vue')
+    // },
     {
         path: '/debug',
         name: 'debug',
@@ -51,7 +71,7 @@ const routes = [
     {
         path: '/date-utils-demo',
         name: 'DateUtilsDemo',
-        component: () => import('@/views/DateUtilsDemo.vue'),
+        component: () => import('@/views/util/DateUtilsDemo.vue'),
         meta: {
             title: '日期工具演示',
             requiresAuth: false
@@ -93,7 +113,7 @@ router.beforeEach(async (to, from, next) => {
             if (!to.meta.roles.includes(userRole)) {
                 // 无权限访问，重定向到首页或提示
                 ElMessage.warning('您没有权限访问此页面');
-                next({ name: 'home' });
+                next({ name: 'HomeView' });
                 return;
             }
         }

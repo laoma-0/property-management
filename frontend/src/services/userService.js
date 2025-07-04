@@ -13,7 +13,7 @@ const userService = {
         return response.data
     },
 
-    // 添加与组件中名称一致的方法
+    // 添加用户 (与组件中使用的方法名一致)
     createUser: async (userData) => {
         return this.register(userData);
     },
@@ -24,7 +24,7 @@ const userService = {
         return response.data
     },
 
-    // 添加与组件中名称一致的方法
+    // 获取用户列表 (与组件中使用的方法名一致)
     fetchUserList: async (params) => {
         return this.getUsers(params);
     },
@@ -36,20 +36,21 @@ const userService = {
     },
 
     // 更新用户
-    updateUser: async (id, userData) => {
-        const response = await api.put(`/users/update`, { id, ...userData })
+    updateUser: async (userData) => {
+        const response = await api.put(`/users/update`, userData)
         return response.data
     },
 
-    // 禁用/启用用户
+    // 切换用户状态 (禁用/启用)
     toggleUserStatus: async (id) => {
         const response = await api.put(`/users/disable/${id}`)
         return response.data
     },
 
-    // 添加与组件中名称一致的方法
+    // 删除用户 (与组件中使用的方法名一致)
     deleteUser: async (id) => {
-        return this.toggleUserStatus(id);
+        const response = await api.delete(`/users/${id}`)
+        return response.data
     }
 }
 
