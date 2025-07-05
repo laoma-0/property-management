@@ -3,7 +3,6 @@ package com.propertymanagement.controller.user;
 
 import com.propertymanagement.model.User;
 import com.propertymanagement.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +10,7 @@ import com.propertymanagement.service.UserService;
 
 import java.time.LocalDateTime;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,14 +18,23 @@ import java.util.Optional;
 public class UserController {
 
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, UserService userService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
 
    
 
